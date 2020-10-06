@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /* 日期函数 */
+      Date.now(); // 获取当前时间距离1970年的时间戳
+      var dt = new Date(); // 获取当前的日期对象实例（会自动调用toString方法）
+      dt.getTime(); // 获取dt所处时间距离1970年的时间戳
+      dt.getFullYear(); // dt时间的年
+      dt.getMonth(); // dt时间的月（0-11，需要手动加1）
+      dt.getDate(); // dt时间的日（0-31）
+      dt.getHours(); // dt时间的时（0-23）
+      dt.getMinutes(); // dt时间的分（0-59）
+      dt.getSeconds(); // dt时间的秒（0-59）
+
+      /* 计算函数 */
+      Math.random();
+
+      /* 数组API
+            forEach
+            every
+            some
+            sort 返回新数组，也会改变原数组
+            map
+            filter
+      */
+      var arr = [1, 5, 2, 7, 4, 3];
+
+      var arr2 = arr.sort(function (a, b) {
+        return a - b;
+      });
+      console.log(arr2);
+
+      /* 对象API
+            for in
+
+      */
+
+      /* 题目
+
+      */
+      // 1.获取 2017-06-10 格式的日期
+      function formDate(dt) {
+        if (!dt) {
+          dt = new Date();
+        }
+        var year = dt.getFullYear();
+        var month = dt.getMonth() + 1;
+        var date = dt.getDate();
+        if (month < 10) {
+          month = '0' + month; // 强制将数字类型转换为字符串类型
+        }
+        if (date < 10) {
+          date = '0' + date;
+        }
+        return year + '-' + month + '-' + date;
+      }
+      var dt = new Date();
+      console.log(formDate(dt));
+      // 2.获取随机数，要求是长度一致的字符串格式
+      var random = Math.random(); // 此随机数位数不固定，范围在0-1
+      random = random + '0000000000'; // 补10个0，防止取前十个数字，目标数字不够
+      random = random.slice(0, 10);
+      console.log('random===', random);
+      // 3.写一个能遍历对象和数组的通用 forEach 函数
+      function forEach(obj, fn) {
+        // 确定指定对象的隐式原型是否与数组构造器的显式原型一致
+        // 不过由于引用类型的隐式原型可写，导致判断不准
+        if (obj instanceof Array) {
+          obj.forEach(function (item, index) {
+            fn(index, item);
+          });
+        } else {
+          for (let key in obj) {
+            if (obj.hasOwnProperty(key)) {
+              fn(key, obj[key]);
+            }
+          }
+        }
+      }
+      var a1 = ['a', 'b', 'c', 'd', 'e'];
+      forEach(a1, function (index, item) {
+        console.log('数组===' + index + '===' + item);
+      });
+      var o1 = {
+        1: 'a',
+        2: 'b',
+        3: 'c',
+      };
+      forEach(o1, function (key, value) {
+        console.log('对象===' + key + '===' + value);
+      });
+    </script>
+  </body>
+</html>

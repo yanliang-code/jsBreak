@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- 
+        这里先渲染第一个 p 标签，再渲染第二个 p 标签，以及内部的 img 标签并发起图片请求。不会
+        阻塞第三个 p 标签的渲染，继续向下渲染。等到图片请求返回，再渲染图片内容
+    -->
+    <p>test</p>
+    <p><img src="./11.png" /></p>
+    <p>test</p>
+
+    <script>
+      window.addEventListener('load', function () {
+        // 页面的全部资源加载完才会执行，包括图片、视频等
+        console.log('window.onload');
+      });
+      document.addEventListener('DOMContentLoaded', function () {
+        // DOM 渲染完即可执行，此时图片、视频还可能没有加载完
+        console.log('DOMContentLoaded');
+      });
+    </script>
+  </body>
+</html>

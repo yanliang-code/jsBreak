@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input id="btn" type="button" value="按钮" />
+    <hr />
+    <div id="contianerDiv">
+      <div id="div1">
+        <p id="p1">激活</p>
+        <p id="p2">取消</p>
+        <p id="p3">取消</p>
+        <p id="p4">取消</p>
+      </div>
+      <div>
+        <p id="p5">取消</p>
+        <p id="p6">取消</p>
+      </div>
+    </div>
+    <hr />
+    <div id="div3">
+      <a href="#">a1</a>
+      <a href="#">a2</a>
+      <a href="#">a3</a>
+      <a href="#">a4</a>
+      <a href="#">a5</a>
+    </div>
+    <script>
+      // 事件
+      /*
+          一、通用事件绑定
+        */
+      var btn = document.getElementById('btn');
+      // 1.每次写addEventListener易出错，而且太长；2.代码压缩时，此关键词无法替换
+      //   btn.addEventListener('click', function (e) {
+      //     console.log('clicked');
+      //   });
+
+      function bindEvent(elem, type, fn) {
+        // IE低版本(8、9、10以及以下)使用 attachEvent 绑定事件，和 W3C 标准不一致
+        // IE低版本兼容性，了解即可，不用深究（面试疯狂问IE低版本，果断放弃）
+        elem.addEventListener(type, fn);
+      }
+      bindEvent(btn, 'click', function (e) {
+        e.preventDefault(); // 阻止默认行为
+        console.log('clicked');
+      });
+      //   bindEventMost(btn, 'click', function (e) {
+      //     console.log('this===', this);
+      //     console.log('e===', e);
+      //   });
+
+      /*
+          二、事件冒泡
+          先触发源元素的事件，再触发父级元素的事件，一层层的向上冒泡（基于 DOM 树形结构）
+        */
+      var p1 = document.getElementById('p1');
+      var containerDiv = document.getElementById('contianerDiv');
+      // 任何DOM节点都可以绑定事件
+      bindEvent(p1, 'click', function (e) {
+        e.stopPropagation(); // 防止冒泡导致containerDiv元素触发点击事件
+        alert('激活');
+      });
+      bindEvent(containerDiv, 'click', function (e) {
+        alert('取消'); // 点击取消弹出提示，利用冒泡机制
+      });
+
+      /*
+          三、事件冒泡的应用（代理）
+          指定div区域内，会随时动态新增许多 a 标签，这里可以使用事件冒泡的机制，避免绑定过多
+          事件以及维护动态生成的dom事件，需注意在外层div需要判断触发事件的源目标是否正确
+        */
+      var div3 = document.getElementById('div3');
+      bindEvent(div3, 'click', function (e) {
+        var target = e.target;
+        console.log(target);
+        if (target.nodeName == 'A') {
+          console.log('点击 a 标签===', target.innerHTML);
+        }
+      });
+      //   bindEventMost(div3, 'click', 'a', function (e) {
+      //     console.log('e===', e);
+      //     console.log('this===', this);
+      //   });
+
+      /*
+          四、完善通用绑定事件的函数
+            elem：绑定事件的元素
+            type：绑定的事件类型
+            selector：被代理的元素标签（决定是否开启代理）
+            fn：回调函数
+            代理的好处：
+                1.代码简洁  2.减少浏览器的内存占用
+        */
+      function bindEventMost(elem, type, selector, fn) {
+        // 不传入selector参数，代表不使用代理
+        if (fn == null) {
+          fn = selector;
+          selector = null;
+        }
+        elem.addEventListener(type, function (e) {
+          var target;
+          if (selector) {
+            target = e.target;
+            if (target.matches(selector)) {
+              // 指定this指向事件触发源dom节点，并传入事件对象
+              fn && fn.call(target, e);
+            }
+          } else {
+            fn && fn(e);
+          }
+        });
+      }
+
+      // ===================================================================
+
+      // ajax
+
+      /*
+        一、XMLHttpRequest
+            原生的请求方法，第三方请求库都是基于此开发的
+            readyState:
+                0：（未初始化）还没调用 send 方法
+                1：（载入）已经调用 send 方法，正在发送请求
+                2：（载入完成）send 方法执行完成，已经收到全部响应内容
+                3：（交互）正在解析响应内容
+                4：（完成）响应内容解析完成，可在客户端调用
+            status：
+                2xx：表示成功处理请求，如：200
+                3xx：需要重定向，浏览器直接跳转
+                4xx：客户端请求错误，如：404
+                5xx：服务器端错误
+        注意：
+            IE 低版本使用 ActiveXObject，和 W3C 标准不一样
+      */
+      function newRequest() {
+        // 建立请求对象
+        var xhr = new XMLHttpRequest();
+        // 建立一个GET请求，路径为/api，异步请求
+        xhr.open('GET', '/chapter02/api/index.json', false);
+        // 请求readyState状态变化，会触发此函数
+        xhr.onreadystatechange = function () {
+          // 函数异步执行
+          // 请求的状态
+          if (xhr.readyState == 4) {
+            // http状态码
+            if (xhr.status == 200) {
+              console.log('request===', xhr.responseText);
+            }
+          }
+        };
+        // 发送请求
+        xhr.send(null);
+      }
+      newRequest();
+
+      // ===================================================================
+
+      // 跨域
+
+      /*
+        一、JSONP
+      */
+      window.callback = function (data) {
+        // 这是我们跨域得到的信息
+        console.log(data);
+      };
+    </script>
+    <script src="http://coding.m.imooc.com/api.js"></script>
+    <!-- 
+        访问以上路径，服务器会动态拼接内容，返回 callback({x:100, y:200}) 
+        返回之后，浏览器会运行此 JS 片段，正好命中上面定义的函数
+    -->
+  </body>
+</html>

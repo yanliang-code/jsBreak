@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="div1" class="class-div1">
+      <p id="p1" data-name="p1-data-name">this is p1</p>
+      <p id="p2">this is p2</p>
+    </div>
+    <div id="div2">
+      <p id="p3">this is p3</p>
+      <p id="p4">this is p4</p>
+    </div>
+    <div class="container">
+      <p></p>
+      <p></p>
+    </div>
+  </body>
+  <script>
+    // DOM
+    /*
+        一、dom 节点操作
+    */
+    /*
+    // 1.原生 js 获取 dom 节点方式（dom 节点就是对象）
+    var div1 = document.getElementById('div1'); // 元素
+    var divList = document.getElementsByTagName('div'); // 集合
+
+    var containerList = document.getElementsByClassName('container'); // 集合
+    // 后推出的，集合了多种条件的获取dom方式
+    var pList = document.querySelectorAll('p'); // 集合
+    console.log('div1===', div1);
+    console.log('divList===', divList);
+    console.log('containerList===', containerList);
+    console.log('pList===', pList);
+
+    // 2.property（js对象 的属性）
+    // 以下获取的属性都是 W3C 标准要求浏览器注入的
+    var p = pList[0]; // JS 对象，指向 dom 节点
+    console.log(p.style.width); // 获取样式
+    p.style.width = '100px'; // 修改样式
+    console.log(p.className); // 获取 class
+    p.className = 'p1'; // 修改 class
+    // 获取 nodeName 和 nodeType
+    console.log(p.nodeName);
+    console.log(p.nodeType);
+
+    // 3.attribute（HTML标签 的属性）
+    p.getAttribute('data-name');
+    p.setAttribute('data-name', 'imooc');
+    p.getAttribute('style');
+    p.setAttribute('style', 'font-size:30px;');
+
+    // 注意：有的修改property，能同步达到修改attribute的效果（不过他们一般对应的名称不同）
+
+    */
+
+    /*
+        二、dom 结构操作
+    */
+    // 1.新增节点(包含新添和移动节点)
+    var div1 = document.getElementById('div1');
+    // 新增
+    var p = document.createElement('p');
+    p.innerHTML = 'this is new p'; // property 操作
+    div1.appendChild(p);
+    // 移动
+    var p3 = document.getElementById('p3');
+    div1.appendChild(p3);
+    // 2.获取父元素和子元素
+    var parentDom = p3.parentElement; // div1
+    console.log('parentDom==', parentDom);
+    // text为空格文本
+    // 1.删除 html 中标签之间的空格
+    // 2.通过 nodeType 进行区分，正规 HTML 中定义的标签都为1
+    var child = div1.childNodes; // div1的子元素集合
+    console.log('child==', child);
+    console.log('child[0].nodeType==', child[0].nodeType); // text 3
+    console.log('child[1].nodeType==', child[1].nodeType); // p    1
+    console.log('child[0].nodeName==', child[0].nodeName); // text #text
+    console.log('child[1].nodeName==', child[1].nodeName); // p    P
+    // 3.删除元素
+    div1.removeChild(child[1]);
+
+    // ===============================================================================
+
+    // BOM
+    /*
+        一、navigator
+    */
+    var ua = window.navigator.userAgent;
+    var isChrome = ua.indexOf('Chrome');
+    console.log('isChrome===', isChrome);
+
+    /*
+        二、screen
+    */
+    console.log(screen.width);
+    console.log(screen.height);
+
+    /*
+        三、location
+    */
+    // 拆解 url 的各部分
+    console.log(location);
+    console.log(location.href); // 整个 url 路径（通过此属性，改变访问网址的路径）
+    console.log(location.protocol); // 协议
+    console.log(location.host); // 域名（一般http默认端口号 80  https 443）
+    console.log(location.hostname); // ip
+    console.log(location.port); // 端口号
+    console.log(location.pathname); // 端口号之后（不包含？和 # 相关的）
+    console.log(location.search); // ？号之后（包括？号）
+    console.log(location.hash); // hash #号之后（包括#号）
+
+    /*
+        四、history
+    */
+    // history.back(); // 浏览器的后退键
+    // history.forward(); // 浏览器的前进键
+  </script>
+</html>

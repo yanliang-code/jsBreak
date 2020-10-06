@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 一、构造函数（大写字母开头）
+      function Foo(name, age) {
+        this.name = name;
+        this.age = age;
+        this.class = 'class-1';
+        // return this; // 默认有这一行
+      }
+      // new时，Foo函数内的this指向为空对象
+      var f = new Foo('zhangsan', 20);
+      //   var f1 = new Foo('lisi', 22);  // 创建多个对象
+      console.log(f);
+
+      // 二、构造函数-扩展
+      //   var a = {}; // 其实是var a = new Object()的语法糖
+      //   var a = []; // 其实是var a = new Array()的语法糖
+      //   function Foo(){...} // 其实是var Foo = new Funciton(...)的语法糖
+      // 实际编程使用左边方式，右边的从易读性、性能方面都不如左边方式，不过要知道左边方式内部做了些什么
+      // 所有的引用类型都有构造函数
+
+      //   使用 instanceof 判断一个函数是否是一个变量的构造函数
+
+      /* 
+      三、原型规则和示例（原型规则是学习原型链的基础）
+        1.所有的引用类型（数组、对象、函数），都具有对象特性，即可自由扩展属性（除了“null”以外）
+        2.所有的引用类型（数组、对象、函数），都有一个__proto__属性（隐式原型），属性值是一个普通的对象（除了“null”以外）
+        3.所有的函数（只有函数），都有一个prototype属性（显式原型），属性值也是一个普通的对象（constructor：函数本身，__proto__：Object的构造函数）
+        4.所有的引用类型（数组、对象、函数），__proto__属性值指向它的构造函数的“prototype”属性值
+        5.当试图得到一个对象的某个属性时，如果这个对象本身没有这个属性，那么会去它的__proto__(即它的构造函数的prototype)中寻找
+      */
+      var obj = {}; // new Object()
+      obj.a = 100;
+      var arr = [];
+      arr.a = 100;
+      function fn() {}
+      fn.a = 100;
+
+      // 引用类型有  隐式原型（浏览器行为）
+      console.log(obj.__proto__);
+      console.log(arr.__proto__);
+      console.log(fn.__proto__);
+
+      // 函数有  显式原型（浏览器行为）
+      console.log(fn.prototype);
+
+      // 对象的隐式原型  ===  对象构造函数的显式原型
+      console.log(obj.__proto__ === Object.prototype);
+
+      // 综合示例
+      // 构造函数
+      function Foo1(name, age) {
+        this.name = name;
+      }
+      // 函数显式原型自由扩展属性
+      Foo1.prototype.alertName = function () {
+        alert(this.name); // this指向fo1（由于调用函数的调用者决定）
+      };
+      // 创建实例对象
+      var fo1 = new Foo1('zhangsan');
+      // 为实例对象上自由扩展属性
+      fo1.printName = function () {
+        console.log(this.name); // this指向fo1（由于调用函数的调用者决定）
+      };
+      // 调用函数（对象自身有name、printName属性）
+      fo1.printName();
+      // 调用函数（对象隐式原型上的，即构造函数的显式原型）
+      fo1.alertName();
+
+      // 循环对象的自身属性
+      for (fo in fo1) {
+        // 保证属性fo是fo1对象的自身属性，不是隐式原型上的
+        if (fo1.hasOwnProperty(fo)) {
+          console.log('fo===', fo);
+        }
+      }
+
+      // 四、原型链
+      // 要去 f.__proto__.___proto___ 中查找
+      // 先fo1自身属性 -- fo1对象的隐式原型（fo1构造函数Foo的显式原型） -- Foo函数的隐式原型（Object构造函数的显式原型）-- Object的隐式原型为null（防止死循环，有个终点）
+      fo1.toString();
+
+      /* 
+      五、instanceof
+        1.用于判断 引用类型 属于哪个 构造函数 的方法
+        2.判断逻辑：
+            f instanceof Foo：f的__proto__一层层往上，能否对应上Foo.prototype
+            f一层层的隐式原型是否等于指定函数的显式原型
+
+      */
+
+      // 六、解题
+      // 1.如何准确判断一个变量时数组类型
+      var array = [];
+      console.log(typeof array); // 只能是object，无法精细区分引用类型
+      console.log(array instanceof Array);
+      console.log(array.toString()); // array构造函数自带toString方法，导致无法获取
+      console.log(Object.prototype.toString.call([])); // 指定使用Object显式原型上的toString方法，指定this指向，结果："[object Array]
+
+      // 2.写一个原型链继承的例子（比较low版本）
+      function Animal() {
+        // 这里面的属性，实例的隐式原型内会存在
+        this.eat = function () {
+          conosle.log('animal eat');
+        };
+        // 默认return this
+      }
+      Animal.prototype.sleep = function () {
+        console.log('animal sleep');
+      };
+      function Dog() {
+        this.bark = function () {
+          console.log('dog bark');
+        };
+      }
+      /* 函数的显式原型是一个对象，两个属性
+            1.constructor：函数本身（构造函数）
+            2.__proto___：隐式原型，函数的隐式原型就是Object构造函数（Object隐式原型是null，不会出现死循环）
+      */
+      console.log('Animal.prototype===', Animal.prototype);
+      console.log('Dog.prototype===', Dog.prototype);
+      /*
+        函数的实例
+            1.函数本身的属性
+            2.隐式原型：就是上面打印的函数显式原型
+      */
+      console.log('new Animal()===', new Animal());
+      console.log('new Dog()===', new Dog());
+      // 将Dog的显式原型，赋值为Ainmal函数实例（Dog的私有属性，只能在Dog构造函数内声明；因为他的显式原型被覆盖）
+      Dog.prototype = new Animal();
+      // Dog实例，最直接的属性是Dog构造函数声明的，隐式原型上的属性都是Animal构造函数声明的
+      var dog = new Dog();
+      console.log('dog====', dog);
+
+      // 2.写一个原型链继承的例子（优雅版本）
+      // 封装DOM查询的例子
+      function Elem(id) {
+        this.elem = document.getElementById(id);
+      }
+      Elem.prototype.html = function (val) {
+        var elem = this.elem;
+        if (val) {
+          elem.innerHTML = val;
+          return this; // 方便链式操作
+        } else {
+          return elem.innerHTML;
+        }
+      };
+      Elem.prototype.on = function (type, fn) {
+        var elem = this.elem;
+        elem.addEventListener(type, fn);
+        return this;
+      };
+      var div1 = new Elem('div1');
+      //   console.log(div1.html());
+      //   div1.html('<div>hello imooc</div>');
+      //   div1.on('click', function () {
+      //     alert('clicked');
+      //   });
+      // 链式操作
+      div1.html('<div>hello imooc</div>').on('click', function () {
+        alert('clicked');
+      });
+      /* 
+      3.描述 new 一个对象的过程
+        - 创建一个新对象
+        - this 指向此新对象
+        - 执行函数内代码，即给this赋值
+        - return 返回此对象
+      */
+    </script>
+  </body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /* 一、执行上下文
+         1.最开始首先是全局执行上下文，将变量定义qq、函数声明fn1提前执行
+         2.所以qq打印为undefined、fn1能够正常调用成功
+         3.执行fn1之前，就出现了函数执行上下文，会将变量定义age、函数声明（没有）、this、arguments（入参）提前执行
+         4.所以age能正常赋值，打印入参name以及变量age也正常
+       */
+      console.log(qq);
+      var qq = 100;
+
+      fn1('zhangsan');
+      function fn1(name) {
+        age = 20;
+        console.log(name, age);
+        var age;
+      }
+      console.log('======================');
+
+      fn2();
+      function fn2() {
+        console.log('fn2=======');
+      }
+      //   fn3()执行报错
+      //     函数表达式方式，函数不会再执行上下文时声明，会将其变量a提前声明，
+      //     所以在其位置前调用此函数会报错
+
+      //   fn3();
+      var fn3 = function () {
+        console.log('fn3=======');
+      };
+
+      /*二、this
+        1.this在执行时确认值，定义时无法确认
+      */
+      var aa = {
+        name: 'A',
+        fn: function (name, age) {
+          alert(name + '===' + age);
+          // 由于js是解释性语言，就算此处代码编写错误，也不会报错；要到被调用执行时，才会报错
+          console.log(this);
+          console.log(this.name);
+        },
+      };
+      aa.fn(); // this指向aa对象
+      aa.fn.call({ name: 'B' }); // this指向{name:'B'}
+      var bb = aa.fn;
+      bb(); // this指向window
+
+      aa.fn.call({ name: 'B' }, 'zhangsan', 19); // this指向{name:'B'}
+      aa.fn.apply({ name: 'B' }, ['lisi', 23]); // this指向{name:'B'}
+      var cc = function () {
+        console.log(this);
+      }.bind({ x: 100 });
+      cc();
+
+      /*三、作用域
+        1.无块级作用域
+        2.只有全局和函数作用域
+      */
+      // 方式一（var无块级作用域，变量name属于全局作用域）
+      //   if (true) {
+      //     var name = 'zhangsan';
+      //   }
+      //   console.log(name);
+      // 方式二(推荐此种，变量声明前置)
+      var name;
+      if (true) {
+        name = 'zhangsan';
+      }
+      console.log(name);
+      // 作用域：a变量是游离的（全局作用域，易被覆盖），b作用域在fn
+      var a = 100;
+      function fn() {
+        var b = 200;
+        // 当前作用域没有定义的变量，即为自由变量
+        console.log(a);
+        console.log(b);
+      }
+      fn();
+
+      /*四、作用域链：
+         1.哪个作用域定义了此函数，此函数的父级作用域就是它
+             F2的父级作用域是F1
+      */
+      var c = 100;
+      function F1() {
+        var d = 200;
+        function F2() {
+          var e = 300;
+          console.log(c);
+          console.log(d);
+          console.log(e);
+        }
+        F2();
+      }
+      F1();
+
+      /*五、闭包
+        1.以下B1、B2、B3充分证明，作用域链在函数定义时形成
+        2.函数作为返回值
+        3.函数作为参数来传递
+      */
+      console.log('-=-=-=-=-============================----------');
+      // 1.函数作为返回值
+      function B1() {
+        var ba = 100;
+        // 返回一个函数(函数作为返回值)
+        return function () {
+          console.log(ba); // 自由变量，父级作用域寻找
+        };
+      }
+      // b1得到一个函数
+      var b1 = B1();
+      var ba = 200;
+      b1(); // 100
+
+      // 2.函数作为参数来传递
+      function B2(fn) {
+        var ba1 = 300;
+        fn && fn();
+      }
+      var ba1 = 400;
+      function B3() {
+        console.log(ba1); // 自由变量，父级作用域寻找
+      }
+      B2(B3); // 400
+
+      /*六、题目
+        1.创建10个 a 标签，点击时弹出对应的序号
+        2.实际开发中闭包的应用
+      */
+
+      // 1.
+      // 错误写法：遍历创建10个a链接，点击时，函数执行去父级作用域获取变量i的值（存在于全局作用域中,i变化后会覆盖之前的值），
+      // 根据作用域链去获取时，早就变成10（只要生成十个dom，变量i就为10）
+      //   var domA;
+      //   for (var i = 0; i < 10; i++) {
+      //     domA = document.createElement('a');
+      //     domA.innerHTML = i + '<br/>';
+      //     domA.addEventListener('click', function (e) {
+      //       e.preventDefault();
+      //       alert(i);
+      //     });
+      //     document.body.appendChild(domA);
+      //   }
+      // 正确写法：点击事件时，获取变量i值不在从全局作用域中获取，在其父级作用域（自执行函数）中获取
+      // 每一个函数内的变量i都是唯一的（全局作用域的i还是会变成10）
+      // 自执行函数：就是不用调用，只要定义完成，立即执行的函数
+      // 正确销毁方法：将指定dom的click事件置为null，否则自执行函数形成的作用域无法释放，一直引用着i
+      //   var domA;
+      //   for (var i = 0; i < 10; i++) {
+      //     (function (i) {
+      //       // 自执行函数会形成函数作用域
+      //       domA = document.createElement('a');
+      //       domA.innerHTML = i + '<br/>';
+      //       // 因为匿名函数作用域被引用了, 不能够被销毁, 所以父级的作用域(立即执行函数作用域)也不能够被销毁
+      //       domA.addEventListener('click', function (e) {
+      //         e.preventDefault();
+      //         alert(i);
+      //       });
+      //       document.body.appendChild(domA);
+      //     })(i);
+      //   }
+
+      // 2.
+      // 判断是否是第一次登录
+      function isFirstLoad() {
+        // 闭包的好处：在 isFirstLoad 函数外，不可能修改掉 _list 的值
+        var _list = [];
+        return function (id) {
+          if (_list.indexOf(id) > -1) {
+            return false;
+          } else {
+            _list.push(id);
+            return true;
+          }
+        };
+      }
+      // 只要执行isFirstLoad函数赋值给变量，只要栈内有指向isFirstLoad返回函数的变量，
+      // _list变量就会一直在内存中，直到浏览器关闭获取手动将isFirst置为null
+      var isFirst = isFirstLoad();
+      console.log(isFirst(10)); // true
+      console.log(isFirst(10)); // false
+      console.log(isFirst(20)); // true
+    </script>
+  </body>
+</html>
+<!-- 
+    作用域链：决定它按照什么路径（定义时就形成）取获取变量值
+    调用方式：决定函数被执行时（运行时才决定），this的指向
+ -->

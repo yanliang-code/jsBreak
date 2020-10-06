@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- 先请求，在执行，一直阻塞下面执行 -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <script>
+      // 什么是异步
+      // 异步：100  300  200
+      // 同步：100  200（1秒啥也没干） 300
+      // 同步会阻塞代码的执行
+      //   console.log(100);
+      //   setTimeout(function () {
+      //     console.log(200);
+      //   }, 1000);
+      //   console.log(300);
+
+      // 同步效果
+      //   console.log(100);
+      //   alert('1s后点击'); // 1s之后点击确认
+      //   console.log(200);
+
+      //   console.log('start');
+      //   $.get('./04/test.json', function name(params) {
+      //     console.log(params);
+      //   });
+      //   console.log('end');
+
+      // 单线程：一回只能做一件事（同时不能干两件事）
+      // 先打印100，发现又setTimeout异步请求，将其函数拿出放入执行队列，接着打印300；
+      // 全部执行完毕，处于空闲状态时，拿来执行队列，发现此函数没有延时时间，所以立刻执行，打印200
+      console.log(100);
+      // 多个异步函数，不是按照定义的先后顺序来执行，是按照响应时间长短来决定执行顺序
+      setTimeout(function () {
+        console.log(200);
+      }, 2000);
+      setTimeout(function () {
+        console.log(400);
+      });
+      console.log(300);
+    </script>
+  </body>
+</html>

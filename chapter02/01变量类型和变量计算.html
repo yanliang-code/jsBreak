@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 一、
+      // 值类型
+      var a = 100;
+      var b = a;
+      a = 2000;
+      console.log(b); //100
+      // 引用类型（对象、数组、函数）
+      // 若不共用，像值类型一样，每次copy一份，会导致内存占用过大（引用类型可以疯狂加属性）
+      var a1 = { age: 20 };
+      var b1 = a1;
+      a1.age = 21;
+      console.log(b1.age); //21
+
+      // 二、
+      // typeof运算符（6种类型）
+      // typeof只能区分值类型的详细类型（前四个），引用类型无法区分详细（只能区分出函数）
+      // typeof null 为 object 类型
+      console.log(typeof undefined);
+      console.log(typeof 'abc');
+      console.log(typeof 123);
+      console.log(typeof true);
+      console.log(typeof {});
+      console.log(typeof []);
+      // 没有指向任何地址的对象
+      console.log(typeof null);
+      console.log(typeof console.log);
+
+      /* 
+        变量计算 - 强制类型转换（主要讲解值类型）
+        1.字符串拼接
+        2.== 运算符
+        3.if 语句
+        4.逻辑运算
+      */
+      //1
+      var a2 = 100 + 10;
+      var b2 = 100 + '10';
+      console.log(a2);
+      console.log(b2);
+      // 2
+      console.log(100 == '100');
+      console.log(0 == ''); // 都可转换为false
+      console.log(null == undefined); // 都可转换为false
+      // 3
+      var a3 = true;
+      if (a3) {
+        console.log('a3');
+      }
+      var b3 = 100;
+      // 强制转换为true
+      if (b3) {
+        console.log('b3');
+      }
+      var c3 = '';
+      // 强制转换为false
+      if (c3) {
+        console.log('c3');
+      }
+      if (NaN) {
+        console.log('NaN');
+      }
+      if (0) {
+        console.log('0');
+      }
+      if ('') {
+        console.log(' ');
+      }
+      if (null) {
+        console.log('null');
+      }
+      if (undefined) {
+        console.log('undefined');
+      }
+      if (false) {
+        console.log('false');
+      }
+      // 4 与或非
+      console.log(10 && 0); // 10转化为true
+      console.log('' || 'abc'); // ''转化为false
+      console.log(!window.abc);
+      // 判断一个变量会被当做 true 还是 false
+      var a4 = 100;
+      console.log(!!a4);
+    </script>
+  </body>
+</html>

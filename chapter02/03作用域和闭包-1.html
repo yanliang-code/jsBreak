@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // JavaScript中的函数执行会形成私有的作用域。
+      // 1.作用域的销毁
+      // 　一般情况下，函数执行形成一个私有的作用域，当执行完成后就销毁了->节省内存空间
+
+      // 2.作用域不立即销毁
+      function fn() {
+        var i = 10;
+        return function (n) {
+          console.log(n + i++);
+        };
+      }
+      /*
+        先执行fn,有一个私有的变量i=10,返回一个堆内存地址 xxxfff111,我们发现这个地址还用到了一次,
+        那么当前的这个fn形成的私有作用域（A）就不能立即销毁了,xxxfff111(15)->输出25,A中的i变为11；
+        当xxxfff111执行完了,发现这个地址没用了,浏览器就把A、xxxfff111都释放了
+      */
+      fn()(15); //->
+      fn()(20); //->在执行fn的时候一切都从新开始了,和上面的步骤是一样的->输出30
+
+      // 3.作用域不销毁：形成一个私有作用域,里面的内容被外面占用了
+      function fn() {
+        var i = 10;
+        return function (n) {
+          console.log(n + i++);
+        };
+      }
+      //   fn执行形成一个私有的作用域A,A中有一个私有的变量i=10,A中返回一个地址xxxfff11,
+      //   被外面的f占用了,那么当前的A就不能销毁了（需要销毁时，手动将f置为null）
+      var f = fn();
+      f(15); //->输出25,让A中的i=11
+      f(20); //->输出31,让A中的i=12
+    </script>
+  </body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 一、模块化
+
+      // 1.不使用模块化情况
+      // util.js文件
+      function getFormateDate(data, type) {
+        //不同type，返回不同格式的data日期
+      }
+      // a-util.js
+      function aGetFormateDate(data) {
+        return getFormateDate(data, 2);
+      }
+      // a.js
+      function getDate() {
+        var date = new Date();
+        console.log(aGetFormateDate(date));
+      }
+      /* 
+        以上三个文件，若想满足三个文件中函数能够正常调用，必须保证
+        1.全部挂载到全局window对象，才能暴露给对方使用(全局变量污染)
+        2.三个 js 顺序加载(调用函数造成依赖关系，a.js无法得知a-util.js依赖于哪些文件，造成漏加载情况)
+        script src="./util.js"
+        script src="./a-util.js"
+        script src="./a.js"
+      */
+
+      // 2.使用模块化情况
+      // 主要是通过export对外提供接口，通过require引入接口
+      // 真正只需要通过script标签引入a.js，其余的根据require得出依赖关系，自动引入
+      // 涉及到的其他两个函数，引入后使用局部变量存储，不会作为全局变量，也就没有全局变量污染的情况
+      // 此种情况a.js不需要了解a-util.js依赖于谁，a-util.js它自己通过require可得知依赖项，自己自动加载
+
+      // 3.模块化一：require.js
+      /*
+        参考：chapter02\07requireJs\require.html（可看到按照依赖关系逐一按需异步加载）
+        1.引入 require.js，会全局挂载 define、require 函数
+        2.所有对外提供的接口（可以返回任意形式，例子中是对象形式）都必须使用 define 函数定义
+        3.依赖项通过 define、require 函数的第一个参数传入，数组形式，每个元素都是一个依赖；
+          第二个参数，函数类型，入参就是每个依赖的返回值
+        4.最外层 js，最需要引入，只需要使用 require 引入依赖项
+        5.最底层 js，无依赖，第一个依赖项无需传入，只需传入一个函数即可
+        6.依赖项都必须是通过 define 定义的
+      */
+
+      // 4.模块化二：CommonJs
+      /*
+        nodejs 模块化规范，先被大量前端使用，原因：
+            1.前端依赖的插件和库，都可以从 npm 中获取
+            2.构建工具的高度自动化，使得 npm 的使用成本非常低
+            3.CommonJs 不会异步加载 js，而是同步一次性加载出来（nodejs是服务器端，不存在异步）
+
+      */
+    </script>
+  </body>
+</html>

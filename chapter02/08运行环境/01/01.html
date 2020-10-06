@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+    <!-- 
+        通过加载静态资源，浏览器获取到 html。按行解析 html，先解析 head，发现引用外部 css 样式，
+        请求文件并解析成 cssom，继续解析 body 内容，解析 dom 树时，已经存在 cssom 树，也就直接
+        生成 renderTree，浏览器根据 renderTree 直接渲染显示页面
+     -->
+     <!-- 
+        思考
+        1.为什么把 css 放在 head 中
+        答：
+            1.防止多次渲染、页面跳转
+            若把其放在body内的最底部，浏览器解析 dom 树时，还没有 cssom树，全部按照默认样式来渲染
+            页面；渲染完页面全部显示，再请求 css 样式，发现样式规则变化了，浏览器会再次重新渲染一遍
+            页面，导致页面出现跳动（性能方面也不好，多次渲染）
+      -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./01.css"></link>
+  </head>
+  <body>
+    <div>test</div>
+  </body>
+</html>

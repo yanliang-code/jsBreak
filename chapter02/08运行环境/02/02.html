@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- 
+        浏览器解析 body，先渲染出内容为defalut的 div，之后遇到 script 脚本，阻塞浏览器后面的
+        解析渲染，执行控制权在02.js，执行它时将他内容为defalut的 div 调整内容，执行完，浏览器
+        渲染得到控制权，进行页面渲染
+        若不阻塞渲染，在执行 02.js 的同时，渲染内容为 test 的 p 标签；此时，02.js 中还修改了p 标签的内容
+        为 develop（正常阻塞渲染时，JS 是拿不到 p 标签的，还未渲染）。此时，浏览器是应该渲染 test 还是
+        develop 呢？所以，执行 JS 脚本时必须阻塞（修改已经渲染的 dom 不怕，怕的是修改正在渲染的 dom）
+    -->
+    <!-- 
+        思考
+        1.为何把 JS 放在 body 内的最下方
+        答：
+            1.不会阻塞 dom 的解析渲染（页面的大体结构能更快的出来）
+            2.JS 脚本能够拿到所有的 dom 节点
+     -->
+    <div id="container">default</div>
+    <script src="./02.js"></script>
+    <p>test</p>
+  </body>
+</html>

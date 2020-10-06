@@ -1,0 +1,4 @@
+# dependencies  npm包文件
+chapter02/07webpack/node_modules
+chapter02/07webpack/dist
+chapter02/07webpack/package-lock.json
